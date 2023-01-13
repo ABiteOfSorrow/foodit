@@ -6,6 +6,8 @@ function App() {
     const [order, setOrder] = useState('createdAt');
     const [listItems, setListItems] = useState([]);
     const [cursor, setCursor] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingError, setLoadingError] = useState(null);
 
     const sortedItems = listItems.sort((a, b) => (b[order] - a[order]));
     
@@ -20,7 +22,20 @@ function App() {
     }
     
     // Load items
-    const handleLoadClick = async (options) => {
+    const handleLoad = async (options) => {
+
+        let result;
+        try {
+            setIsLoading(true);
+            setLoadingError(null);
+            result = await getFoods(options);
+        } catch (error) {
+            setLoadingError(error);
+            return
+        } finally {
+            setIsLoading(false);
+        }
+
         const { foods, paging: {nextCursor} } = await getFoods(options);
         if (!options.cursor) {
             setListItems(foods);
@@ -32,12 +47,12 @@ function App() {
 
     // Load more items
     const handleLoadMore = async () => {
-        handleLoadClick({order, cursor});        
+        handleLoad({order, cursor});        
     }
 
     // Load items (default)
     useEffect(() => {
-        handleLoadClick({order});
+        handleLoad({order});
     }, [order]);
 
   return (
@@ -47,8 +62,8 @@ function App() {
             <button onClick={handleCalorieClick}>칼로리순</button>
         </div>
         <FoodList items={sortedItems} onDelete={handleDelete}/>
-        <button onClick={handleLoadClick}>불러오기</button>
-        {cursor && <button onClick={handleLoadMore}>더보기</button>}
+        {cursor && (<button disabled={isLoading} onClick={handleLoadMore}>더보기</button>)}
+        {loadingError?.message && <span>{loadingError.message}</span>}
     </div>
   );
 }
