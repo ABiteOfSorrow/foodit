@@ -28,7 +28,7 @@ function FoodList({ items, onDelete }) {
   <ul className='FoodList'>
     {items.map((item) => {
         return (
-            <li>
+            <li key={item.id}>
                 <FoodListItem item={item} onDelete={onDelete}/>
             </li>
     )})}
