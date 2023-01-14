@@ -8,6 +8,7 @@ function App() {
     const [cursor, setCursor] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [loadingError, setLoadingError] = useState(null);
+    const [search, setSearch] = useState("");
 
     const sortedItems = listItems.sort((a, b) => (b[order] - a[order]));
     
@@ -50,6 +51,13 @@ function App() {
         handleLoad({order, cursor});        
     }
 
+    // Search items
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        setSearch(e.target['search'].value);
+        handleLoad({search});
+    }
+
     // Load items (default)
     useEffect(() => {
         handleLoad({order});
@@ -60,6 +68,10 @@ function App() {
         <div>
             <button onClick={handleNewestClick}>최신순</button>
             <button onClick={handleCalorieClick}>칼로리순</button>
+            <form onSubmit={handleSearchSubmit}>
+                <input name='search'/>
+                <button type='submit'>검색</button>
+            </form>
         </div>
         <FoodList items={sortedItems} onDelete={handleDelete}/>
         {cursor && (<button disabled={isLoading} onClick={handleLoadMore}>더보기</button>)}
