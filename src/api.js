@@ -1,5 +1,5 @@
 export default async function getFoods({order = "", cursor = "", limit = 10, search = ""}) {
-    const query = `order=${order}&cursor=${cursor}&limit=${limit}&search=${search}`
+    const query = `order=${order}&cursor=${cursor}&limit=${limit}&search=${search}`;
     const rawResponse = await fetch(`https://learn.codeit.kr/9026/foods?${query}`);
 
     if (!rawResponse.ok) {

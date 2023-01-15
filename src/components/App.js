@@ -1,6 +1,7 @@
 import FoodList from './FoodList';
 import getFoods from '../api';
 import { useState, useEffect } from 'react';
+import FoodForm from './FoodForm';
 
 function App() {
     const [order, setOrder] = useState('createdAt');
@@ -73,6 +74,7 @@ function App() {
                 <button type='submit'>검색</button>
             </form>
         </div>
+        <FoodForm />
         <FoodList items={sortedItems} onDelete={handleDelete}/>
         {cursor && (<button disabled={isLoading} onClick={handleLoadMore}>더보기</button>)}
         {loadingError?.message && <span>{loadingError.message}</span>}
