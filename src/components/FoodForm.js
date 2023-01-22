@@ -1,15 +1,20 @@
 import { useState } from "react"
+import { createFood } from '../api';
 import FileInput from "./FileInput";
 import "./FoodForm.css";
 
-function FoodForm() {
-
-    const [values, setValues] = useState({
+const INITIAL_VALUE = {
         title: '',
         calorie: 0,
         content: '',
         imgFile: null,
-    });
+}
+
+function FoodForm() {
+
+    const [values, setValues] = useState(INITIAL_VALUE);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submittingError, setSubmittingError] = useState(null);
 
     const handleChange = (name, value) => {
         setValues((preValues) => ({
@@ -19,12 +24,30 @@ function FoodForm() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        handleInputChange(name, value)
+        handleChange(name, value)
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        // prevent default get request of html form tag
         e.preventDefault();
-        console.log({values})
+        const formData = new FormData();
+        formData.append('title', values.title);
+        formData.append('calorie', values.calorie);
+        formData.append('content', values.content);
+        formData.append('imgFile', values.imgFile);
+
+        try {
+            setSubmittingError(null);
+            setIsSubmitting(true);
+            await createFood(formData);
+        } catch (error) {
+            setSubmittingError(error);
+            return;
+        } finally {
+            setIsSubmitting(false);
+        }
+        setValues(INITIAL_VALUE);
+
     }
 
     return (
@@ -33,7 +56,8 @@ function FoodForm() {
         <input name="title" value={values.title} onChange={handleInputChange} />
         <input type="number" name="calorie" value={values.calorie} onChange={handleInputChange} />
         <input name="content" value={values.content} onChange={handleInputChange} />
-        <button type="submit">확인</button>
+        <button type="submit" disabled={isSubmitting}>확인</button>
+        {submittingError?.message && <div>{submittingError.message}</div>}
     </form>
     )
 

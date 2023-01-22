@@ -34,7 +34,9 @@ function FileInput({ name, value, onChange}) {
     return (
         <div>
         <img src={preView} alt="이미지 미리보기" />
-        <input type="file" onChange={handleChange} ref={inputRef}/>
+        <input type="file" 
+               accepet="image/png, image/jpeg, image/ico"
+            onChange={handleChange} ref={inputRef}/>
         {value && <button onClick={handleClearClick}>x</button>}
         </div>
     )

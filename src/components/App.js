@@ -1,5 +1,5 @@
 import FoodList from './FoodList';
-import getFoods from '../api';
+import { getFoods } from '../api';
 import { useState, useEffect } from 'react';
 import FoodForm from './FoodForm';
 

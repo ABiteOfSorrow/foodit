@@ -12,7 +12,7 @@ function FoodListItem({ item, onDelete }) {
 
   return (
     <div className='FoodListItem'>
-      <img src={imgUrl} alt={title} />
+      <img className='FoodImg' src={imgUrl} alt={title} />
       <div>{title}</div>
       <div>{calorie}</div>
       <div>{content}</div>
