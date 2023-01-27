@@ -59,22 +59,30 @@ function App() {
         handleLoad({search});
     }
 
+    // create food
+    const handleSubmitSuccess = (newItem) => {
+        setListItems((prevItems) => [...prevItems, ...newItem]);
+    }
+
+
     // Load items (default)
     useEffect(() => {
         handleLoad({order});
     }, [order]);
 
+
+
   return (
     <div>
         <div>
+            <FoodForm onSubmitSuccess={handleSubmitSuccess}/>
             <button onClick={handleNewestClick}>최신순</button>
             <button onClick={handleCalorieClick}>칼로리순</button>
             <form onSubmit={handleSearchSubmit}>
                 <input name='search'/>
                 <button type='submit'>검색</button>
             </form>
-        </div>
-        <FoodForm />
+        </div>        
         <FoodList items={sortedItems} onDelete={handleDelete}/>
         {cursor && (<button disabled={isLoading} onClick={handleLoadMore}>더보기</button>)}
         {loadingError?.message && <span>{loadingError.message}</span>}

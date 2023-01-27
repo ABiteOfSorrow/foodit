@@ -10,7 +10,17 @@ const INITIAL_VALUE = {
         imgFile: null,
 }
 
-function FoodForm({initialValue = INITIAL_VALUE, initialPreview, onCancel}) {
+function sanitize(type, value) {
+    switch (type) {
+      case 'number':
+        return Number(value) || 0;
+  
+      default:
+        return value;
+    }
+  }
+
+function FoodForm({initialValue = INITIAL_VALUE, initialPreview, onSubmitSuccess, onCancel}) {
 
     const [values, setValues] = useState(initialValue);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,8 +34,8 @@ function FoodForm({initialValue = INITIAL_VALUE, initialPreview, onCancel}) {
     )}
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        handleChange(name, value)
+        const { name, value, type } = e.target;
+        handleChange(name, sanitize(type, value));
     }
 
     const handleSubmit = async (e) => {
@@ -36,7 +46,7 @@ function FoodForm({initialValue = INITIAL_VALUE, initialPreview, onCancel}) {
         formData.append('calorie', values.calorie);
         formData.append('content', values.content);
         formData.append('imgFile', values.imgFile);
-        let result;
+        const { food } = await createFood(formData);
         try {
             setSubmittingError(null);
             setIsSubmitting(true);
@@ -47,7 +57,7 @@ function FoodForm({initialValue = INITIAL_VALUE, initialPreview, onCancel}) {
         } finally {
             setIsSubmitting(false);
         }
-        const { review } = result;
+        onSubmitSuccess(food);
         setValues(INITIAL_VALUE);
 
 
