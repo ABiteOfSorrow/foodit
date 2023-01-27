@@ -23,3 +23,16 @@ export async function createFood(formData) {
     const response = await rawResponse.json();
     return response;
 }
+
+export async function updateFood(id, formData) {
+    const rawResponse = await fetch(`${BASE_URL}${id}`, {
+        method: 'PUT',
+        body: formData,
+    });
+    if (!rawResponse.ok) {
+        throw new Error('데이터를 수정하는데 실패 했습니다.');
+    }
+
+    const response = await rawResponse.json();
+    return response
+}

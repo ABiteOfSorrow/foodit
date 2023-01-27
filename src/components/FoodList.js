@@ -1,4 +1,6 @@
-import './FoodList.css'
+import './styles/FoodList.css'
+import { useState } from 'react';
+import FoodForm from './FoodForm';
 
 function formatDate(value) {
     const date = new Date(value);
@@ -6,9 +8,10 @@ function formatDate(value) {
 }
 
 
-function FoodListItem({ item, onDelete }) {
+function FoodListItem({ item, onDelete, onEdit }) {
     const { imgUrl, title, calorie, content, createdAt } = item;
-    const handleDeleteClick = () => onDelete(item.id)
+    const handleDeleteClick = () => onDelete(item.id);
+    const handleEditClick = () => onEdit(item.id);
 
   return (
     <div className='FoodListItem'>
@@ -18,21 +21,39 @@ function FoodListItem({ item, onDelete }) {
       <div>{content}</div>
       <div>{formatDate(createdAt)}</div>
       <button onClick={handleDeleteClick}>삭제</button>
+      <button onClick={handleEditClick}>수정</button>
     </div>
   );
 }
 
 function FoodList({ items, onDelete }) {
+    const [editingId, setEditingId] = useState(null);
+    const handleCancel = () => setEditingId(null);
     
   return (
-  <ul className='FoodList'>
-    {items.map((item) => {
-        return (
-            <li key={item.id}>
-                <FoodListItem item={item} onDelete={onDelete}/>
-            </li>
-    )})}
-  </ul>
+    <ul className='FoodList'>
+        {items.map((item) => {
+            if (item.id === editingId) {
+                const { imgUrl, title, calorie, content } = item;
+                const initialValue = { title, calorie, content }
+            
+            return (
+                <li key={item.id}>
+                    <FoodForm initialValue={initialValue} 
+                              initialPreview={imgUrl}                               
+                              onCancel={handleCancel}/>
+                </li>
+            )}
+    
+            return (
+                <li key={item.id}>
+                    <FoodListItem item={item} 
+                                  onDelete={onDelete} 
+                                  onEdit={setEditingId}/>
+                </li>
+            )}
+        )}
+    </ul>
 )}
 
 export default FoodList;
