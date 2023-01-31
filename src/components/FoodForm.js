@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { createFood } from '../api';
 import FileInput from "./FileInput";
 import "./styles/FoodForm.css";
 
@@ -20,12 +19,11 @@ function sanitize(type, value) {
     }
   }
 
-function FoodForm({initialValue = INITIAL_VALUE, initialPreview, onSubmitSuccess, onCancel}) {
+function FoodForm({initialValue = INITIAL_VALUE, initialPreview, onSubmit, onSubmitSuccess, onCancel}) {
 
     const [values, setValues] = useState(initialValue);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submittingError, setSubmittingError] = useState(null);
-    console.log(values)
 
     const handleChange = (name, value) => {
         setValues((preValues) => ({
@@ -46,17 +44,19 @@ function FoodForm({initialValue = INITIAL_VALUE, initialPreview, onSubmitSuccess
         formData.append('calorie', values.calorie);
         formData.append('content', values.content);
         formData.append('imgFile', values.imgFile);
-        const { food } = await createFood(formData);
+        let result;
+        
         try {
             setSubmittingError(null);
             setIsSubmitting(true);
-            await createFood(formData);
+            result = await onSubmit(formData);
         } catch (error) {
             setSubmittingError(error);
             return;
         } finally {
             setIsSubmitting(false);
         }
+        const { food } = result
         onSubmitSuccess(food);
         setValues(INITIAL_VALUE);
 
